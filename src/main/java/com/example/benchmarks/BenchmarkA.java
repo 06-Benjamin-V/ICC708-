@@ -1,25 +1,28 @@
 package com.example.benchmarks;
 
 import java.util.*;
-
 import com.example.EjercicioA;
 
 public class BenchmarkA {
-    private static final int[] SIZES = { 10, 100, 1000, 10000, 100000, 1000000 };
-    private static final int REPETITIONS = 30;
-    private static final Random RANDOM = new Random();
+
+    private static final int[] SIZES_L = { 10, 100, 500, 1000, 5000, 10000 };
+    private static final int[] SIZES_R = { 10, 100, 1000, 10000, 100000, 1000000 };
+    private static final int REPETITIONS = 10;
+    private static final Random RANDOM = new Random(42);
 
     public static void main(String[] args) {
-        for (int size : SIZES) {
+        System.out.println("ContarL:");
+        for (int size : SIZES_L) {
             int[] data = generarDatos(size);
+            long[] times = benchmark(EjercicioA::contarL, data);
+            System.out.printf("n=%d -> %.4f ms%n", size, mediana(times) / 1_000_000.0);
+        }
 
-            long[] timesL = benchmark(EjercicioA::contarL, data);
-            double medianLms = calcularMedian(timesL) / 1_000_000.0;
-            System.out.println("Tamaño " + size + " - ContarL mediana: " + medianLms + " ms");
-
-            long[] timesR = benchmark(EjercicioA::contarR, data);
-            double medianRms = calcularMedian(timesR) / 1_000_000.0;
-            System.out.println("Tamaño " + size + " - contarR mediana: " + medianRms + " ms");
+        System.out.println("\nContarR:");
+        for (int size : SIZES_R) {
+            int[] data = generarDatos(size);
+            long[] times = benchmark(EjercicioA::contarR, data);
+            System.out.printf("n=%d -> %.4f ms%n", size, mediana(times) / 1_000_000.0);
         }
     }
 
@@ -33,17 +36,22 @@ public class BenchmarkA {
 
     private static long[] benchmark(java.util.function.Function<int[], Map<Integer, Integer>> method, int[] data) {
         long[] times = new long[REPETITIONS];
+        method.apply(data);
+        method.apply(data);
         for (int i = 0; i < REPETITIONS; i++) {
             long start = System.nanoTime();
             method.apply(data);
-            long end = System.nanoTime();
-            times[i] = end - start;
+            times[i] = System.nanoTime() - start;
         }
         return times;
     }
 
-    private static long calcularMedian(long[] times) {
-        Arrays.sort(times);
-        return times[REPETITIONS / 2];
+    private static long mediana(long[] times) {
+        long[] sorted = times.clone();
+        Arrays.sort(sorted);
+        int mid = sorted.length / 2;
+        return (sorted.length % 2 == 0)
+            ? (sorted[mid - 1] + sorted[mid]) / 2
+            : sorted[mid];
     }
 }
