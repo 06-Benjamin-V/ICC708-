@@ -45,7 +45,7 @@ public class ConctStrings {
         //Builder zone
         //-----------------------------------------------------------
         //
-        
+
         public static String tenConcatBuilder() {
                 StringBuilder tenresult = new StringBuilder();
                 long startTime = System.nanoTime();
@@ -80,5 +80,21 @@ public class ConctStrings {
                 long endTime = System.nanoTime();
                 System.out.println("Time taken for 1000 concatenations with builder: " + ((endTime - startTime)/ 1000000.0) + " ms");
                 return oneThousandresult.toString();
+        }
+
+        public static String concatDirect(int repetitions) {
+                String result = "";
+                for (int i = 0; i < repetitions; i++) {
+                        result = first + second;
+                }
+                return result;
+        }
+
+        public static String concatBuilder(int repetitions) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < repetitions; i++) {
+                        sb.append(first).append(second);
+                }
+                return sb.toString();
         }
 }
