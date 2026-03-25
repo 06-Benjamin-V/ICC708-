@@ -4,7 +4,6 @@ import com.example.ConctStrings;
 import java.util.Arrays;
 
 public class benchmarkB {
-
     public static void main(String[] args) {
         int[] sizes = {100, 500, 1000, 5000, 10000, 20000};
 
